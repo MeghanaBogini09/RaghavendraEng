@@ -49,6 +49,11 @@
 
     @if (loading) {
       <p class="py-12 text-center text-gray-500">Loading catalog...</p>
+    } @else if (loadError) {
+      <div class="py-12 text-center">
+        <p class="text-lg text-red-600">{{ loadError }}</p>
+        <p class="mt-2 text-sm text-gray-500">Backend: <code class="rounded bg-gray-100 px-1">cd backend && npm start</code></p>
+      </div>
     } @else if (generators.length === 0) {
       <div class="py-12 text-center">
         <p class="text-lg text-gray-600">No generators available yet. Check back soon.</p>

@@ -15,6 +15,7 @@ import { Generator, GeneratorFilter } from '../../models/generator';
 export class GeneratorsComponent implements OnInit {
   generators: Generator[] = [];
   loading = true;
+  loadError = '';
   filter: GeneratorFilter = {};
 
   types = ['', 'Diesel', 'Gas', 'Portable'];
@@ -28,6 +29,7 @@ export class GeneratorsComponent implements OnInit {
 
   loadGenerators(): void {
     this.loading = true;
+    this.loadError = '';
     this.api.getGenerators(this.filter).subscribe({
       next: (data) => {
         this.generators = data;
@@ -36,6 +38,7 @@ export class GeneratorsComponent implements OnInit {
       error: () => {
         this.generators = [];
         this.loading = false;
+        this.loadError = 'Cannot reach the server. Start the backend (port 3000) and MySQL, then refresh.';
       },
     });
   }

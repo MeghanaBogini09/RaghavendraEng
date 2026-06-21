@@ -51,9 +51,17 @@ if (isProduction && fs.existsSync(FRONTEND_DIST)) {
     res.sendFile(path.join(FRONTEND_DIST, 'index.html'));
   });
 } else {
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+
+  app.get(['/admin', '/admin/*'], (_req, res) => {
+    res.redirect(`${frontendUrl}/admin/login`);
+  });
+
   app.get('/', (_req, res) => {
     res.json({
-      message: 'Raghavendra Engineers API',
+      message: 'Raghavendra Engineers API (backend only)',
+      website: frontendUrl,
+      admin: `${frontendUrl}/admin/login`,
       health: '/api/health',
       docs: {
         auth: '/api/auth',
