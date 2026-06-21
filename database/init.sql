@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS quotations (
   brand             VARCHAR(100)  NULL,
   equipment_details TEXT          NULL,
   power_kva         VARCHAR(100)  NULL,
-  selected_services JSON          NOT NULL,
+  selected_services TEXT          NOT NULL,
   message           TEXT          NULL,
   urgency           VARCHAR(50)   NOT NULL DEFAULT 'Normal',
   status            VARCHAR(50)   NOT NULL DEFAULT 'Pending',

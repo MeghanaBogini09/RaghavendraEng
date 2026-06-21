@@ -1,6 +1,6 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
-const { getPool } = require('../config/db');
+const { getPool, setLastDbError } = require('../config/db');
 
 async function seedAdmin() {
   const pool = await getPool();
@@ -28,7 +28,7 @@ async function ensureTables() {
       password_hash VARCHAR(255) NOT NULL,
       role VARCHAR(50) NOT NULL DEFAULT 'Administrator',
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
 
   await pool.query(`
@@ -44,7 +44,7 @@ async function ensureTables() {
       image_url VARCHAR(500) NULL,
       is_active TINYINT(1) NOT NULL DEFAULT 1,
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
 
   await pool.query(`
@@ -59,17 +59,16 @@ async function ensureTables() {
       brand VARCHAR(100) NULL,
       equipment_details TEXT NULL,
       power_kva VARCHAR(100) NULL,
-      selected_services JSON NOT NULL,
+      selected_services TEXT NOT NULL,
       message TEXT NULL,
       urgency VARCHAR(50) NOT NULL DEFAULT 'Normal',
       status VARCHAR(50) NOT NULL DEFAULT 'Pending',
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      INDEX idx_quotations_status (status),
-      INDEX idx_quotations_created (created_at)
-    )
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
 
   await seedAdmin();
+  setLastDbError(null);
 }
 
 module.exports = { ensureTables, seedAdmin };

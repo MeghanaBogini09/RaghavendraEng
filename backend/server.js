@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const { getPool, resetPool } = require('./config/db');
+const { getPool, resetPool, getLastDbError, setLastDbError } = require('./config/db');
 const { ensureTables } = require('./scripts/init-db');
 
 const authRouter = require('./routes/auth');
@@ -30,8 +30,17 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 let dbReady = false;
 
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', database: dbReady ? 'connected' : 'connecting' });
+app.get('/health', async (_req, res) => {
+  try {
+    await getPool();
+    if (dbReady) {
+      return res.json({ status: 'ok', database: 'connected' });
+    }
+    res.json({ status: 'ok', database: 'connecting', message: getLastDbError() || 'Setting up tables...' });
+  } catch (err) {
+    setLastDbError(err);
+    res.status(503).json({ status: 'error', database: 'disconnected', message: err.message });
+  }
 });
 
 app.get('/api/health', async (_req, res) => {
@@ -78,24 +87,42 @@ if (isProduction && fs.existsSync(FRONTEND_DIST)) {
   });
 }
 
-async function connectDatabase(retries = 10, delayMs = 5000) {
+async function connectDatabase(retries = 30, delayMs = 10000) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      resetPool();
       await ensureTables();
       dbReady = true;
       console.log('Database connected and tables ready.');
       return;
     } catch (err) {
       dbReady = false;
-      console.error(`Database connection attempt ${attempt}/${retries} failed:`, err.message);
+      setLastDbError(err);
+      console.error(`Database setup attempt ${attempt}/${retries} failed:`, err.message);
       if (attempt === retries) {
-        console.error('Could not connect to MySQL. Set DB_HOST, DB_USER, DB_PASSWORD in Render env vars.');
+        console.error('Table setup paused. Will keep retrying in background.');
+        scheduleDbRetry();
         return;
       }
+      resetPool();
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
   }
+}
+
+function scheduleDbRetry() {
+  setTimeout(async () => {
+    try {
+      resetPool();
+      await ensureTables();
+      dbReady = true;
+      setLastDbError(null);
+      console.log('Database connected and tables ready (background retry).');
+    } catch (err) {
+      setLastDbError(err);
+      console.error('Background DB retry failed:', err.message);
+      scheduleDbRetry();
+    }
+  }, 30000);
 }
 
 async function start() {

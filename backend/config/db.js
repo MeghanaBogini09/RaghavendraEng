@@ -9,6 +9,7 @@ const config = {
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  connectTimeout: 60000,
 };
 
 if (process.env.DB_SSL === 'true') {
@@ -16,11 +17,13 @@ if (process.env.DB_SSL === 'true') {
 }
 
 let pool = null;
+let lastDbError = null;
 
 async function getPool() {
   if (!pool) {
     pool = mysql.createPool(config);
     await pool.query('SELECT 1');
+    lastDbError = null;
   }
   return pool;
 }
@@ -32,4 +35,12 @@ function resetPool() {
   }
 }
 
-module.exports = { getPool, resetPool, config };
+function getLastDbError() {
+  return lastDbError;
+}
+
+function setLastDbError(err) {
+  lastDbError = err?.message || String(err);
+}
+
+module.exports = { getPool, resetPool, getLastDbError, setLastDbError, config };
