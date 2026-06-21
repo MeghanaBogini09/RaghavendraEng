@@ -87,23 +87,24 @@ if (isProduction && fs.existsSync(FRONTEND_DIST)) {
   });
 }
 
-async function connectDatabase(retries = 30, delayMs = 10000) {
+async function connectDatabase(retries = 30, delayMs = 15000) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
+      await getPool();
       await ensureTables();
       dbReady = true;
+      setLastDbError(null);
       console.log('Database connected and tables ready.');
       return;
     } catch (err) {
       dbReady = false;
       setLastDbError(err);
-      console.error(`Database setup attempt ${attempt}/${retries} failed:`, err.message);
+      console.error(`Database setup attempt ${attempt}/${retries} failed:`, getLastDbError());
       if (attempt === retries) {
         console.error('Table setup paused. Will keep retrying in background.');
         scheduleDbRetry();
         return;
       }
-      resetPool();
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
   }
@@ -112,14 +113,13 @@ async function connectDatabase(retries = 30, delayMs = 10000) {
 function scheduleDbRetry() {
   setTimeout(async () => {
     try {
-      resetPool();
       await ensureTables();
       dbReady = true;
       setLastDbError(null);
       console.log('Database connected and tables ready (background retry).');
     } catch (err) {
       setLastDbError(err);
-      console.error('Background DB retry failed:', err.message);
+      console.error('Background DB retry failed:', getLastDbError());
       scheduleDbRetry();
     }
   }, 30000);
