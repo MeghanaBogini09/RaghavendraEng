@@ -3,8 +3,8 @@ services:
     name: raghavendra-engineers
     runtime: node
     plan: free
-    buildCommand: cd frontend && npm install --include=dev && npm run build && cd ../backend && npm install
-    startCommand: cd backend && npm start
+    buildCommand: NODE_OPTIONS=--max-old-space-size=460 npm run render-build
+    startCommand: npm run render-start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV

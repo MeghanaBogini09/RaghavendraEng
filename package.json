@@ -3,6 +3,8 @@
   "private": true,
   "scripts": {
     "build": "cd frontend && npm install --include=dev && npm run build",
+    "render-build": "cd frontend && npm install --include=dev && npm run build && cd ../backend && npm install",
+    "render-start": "cd backend && node server.js",
     "start": "cd backend && npm start",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm start"

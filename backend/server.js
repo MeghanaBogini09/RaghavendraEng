@@ -99,7 +99,9 @@ async function connectDatabase(retries = 10, delayMs = 5000) {
 }
 
 async function start() {
-  app.listen(PORT, () => {
+  fs.mkdirSync(path.join(__dirname, 'uploads', 'generators'), { recursive: true });
+
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`Raghavendra Engineers running on port ${PORT}`);
     if (isProduction && fs.existsSync(FRONTEND_DIST)) {
       console.log('Serving frontend from', FRONTEND_DIST);
