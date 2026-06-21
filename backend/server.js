@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const { getPool } = require('./config/db');
+const { getPool, resetPool } = require('./config/db');
 const { ensureTables } = require('./scripts/init-db');
 
 const authRouter = require('./routes/auth');
@@ -27,6 +27,12 @@ if (!isProduction) {
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+let dbReady = false;
+
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', database: dbReady ? 'connected' : 'connecting' });
+});
 
 app.get('/api/health', async (_req, res) => {
   try {
@@ -72,21 +78,35 @@ if (isProduction && fs.existsSync(FRONTEND_DIST)) {
   });
 }
 
-async function start() {
-  try {
-    await ensureTables();
-    app.listen(PORT, () => {
-      console.log(`Raghavendra Engineers API running on port ${PORT}`);
-      if (isProduction && fs.existsSync(FRONTEND_DIST)) {
-        console.log('Serving frontend from', FRONTEND_DIST);
+async function connectDatabase(retries = 10, delayMs = 5000) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      resetPool();
+      await ensureTables();
+      dbReady = true;
+      console.log('Database connected and tables ready.');
+      return;
+    } catch (err) {
+      dbReady = false;
+      console.error(`Database connection attempt ${attempt}/${retries} failed:`, err.message);
+      if (attempt === retries) {
+        console.error('Could not connect to MySQL. Set DB_HOST, DB_USER, DB_PASSWORD in Render env vars.');
+        return;
       }
-      console.log('Admin login: Administrator / Admin@123');
-    });
-  } catch (err) {
-    console.error('Failed to start server:', err.message);
-    console.error('Ensure MySQL is running and .env credentials are correct.');
-    process.exit(1);
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
   }
+}
+
+async function start() {
+  app.listen(PORT, () => {
+    console.log(`Raghavendra Engineers running on port ${PORT}`);
+    if (isProduction && fs.existsSync(FRONTEND_DIST)) {
+      console.log('Serving frontend from', FRONTEND_DIST);
+    }
+    console.log('Admin login: Administrator / Admin@123');
+    connectDatabase();
+  });
 }
 
 start();

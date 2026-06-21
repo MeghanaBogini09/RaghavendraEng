@@ -11,6 +11,10 @@ const config = {
   queueLimit: 0,
 };
 
+if (process.env.DB_SSL === 'true') {
+  config.ssl = { rejectUnauthorized: false };
+}
+
 let pool = null;
 
 async function getPool() {
@@ -21,4 +25,11 @@ async function getPool() {
   return pool;
 }
 
-module.exports = { getPool, config };
+function resetPool() {
+  if (pool) {
+    pool.end().catch(() => {});
+    pool = null;
+  }
+}
+
+module.exports = { getPool, resetPool, config };
