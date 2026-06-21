@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+backend/.env
+
+# Local MySQL data
+mysql-data/
+
+# Build output
+frontend/dist/
+frontend/.angular/
+
+# OS
+.DS_Store
+Thumbs.db

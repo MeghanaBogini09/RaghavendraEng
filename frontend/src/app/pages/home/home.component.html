@@ -1,0 +1,134 @@
+<!-- Hero -->
+<section class="relative overflow-hidden bg-navy-900">
+  <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggIGQ9Ik0zNiAzNGg0djJoLTR6TTAgMzRoNHYyaC00ek0zNiAwSDM2IDM2SDM2IDM2SDM2VjBoNHY0ek0wIDM2SDM2VjBoNHY0SDB6TTAgMzRoNHYyaC00ek0zNiAzNGg0djJoLTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40"></div>
+  <div class="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+    <div class="max-w-3xl">
+      <span class="inline-block rounded-full bg-brand-500/20 px-4 py-1 text-sm font-medium text-brand-500">
+        Diesel Power Specialists
+      </span>
+      <h1 class="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+        {{ company.name }}
+      </h1>
+      <p class="mt-6 text-lg leading-relaxed text-gray-300">
+        {{ company.description }}
+      </p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a routerLink="/quotation" class="btn-primary text-base">Request Quotation</a>
+        <a routerLink="/services" class="btn-secondary text-base">Our Services</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Highlights -->
+<section class="border-b border-gray-200 bg-white py-12">
+  <div class="mx-auto grid max-w-7xl gap-6 px-4 sm:grid-cols-2 lg:grid-cols-4 sm:px-6 lg:px-8">
+    @for (item of highlights; track item.title) {
+      <div class="text-center">
+        <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-500/10 text-brand-500">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h3 class="font-semibold text-gray-900">{{ item.title }}</h3>
+        <p class="mt-1 text-sm text-gray-600">{{ item.desc }}</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Services Preview -->
+<section class="py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="section-title">Our Core Services</h2>
+      <p class="section-subtitle mx-auto max-w-2xl">
+        Erection, commissioning, repairs and overhauls for diesel generator sets, diesel engines, and alternators.
+      </p>
+    </div>
+    <div class="mt-12 grid gap-6 sm:grid-cols-2">
+      @for (service of services; track service.id) {
+        <div class="card">
+          <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-brand-500 text-white">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">{{ service.name }}</h3>
+          <p class="mt-2 text-sm text-gray-600">{{ service.description }}</p>
+        </div>
+      }
+    </div>
+    <div class="mt-10 text-center">
+      <a routerLink="/services" class="btn-secondary">View All Services</a>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Generators -->
+@if (featuredGenerators.length > 0) {
+  <section class="bg-white py-16 sm:py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h2 class="section-title">Our Generators</h2>
+        <p class="section-subtitle mx-auto max-w-2xl">
+          Browse diesel, gas, and portable generator sets available from our catalog.
+        </p>
+      </div>
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        @for (gen of featuredGenerators; track gen.id) {
+          <article class="card overflow-hidden p-0">
+            <div class="relative h-40 overflow-hidden bg-gradient-to-br from-navy-800 to-brand-700">
+              @if (gen.imageUrl) {
+                <img [src]="imageSrc(gen)" [alt]="gen.name" class="h-full w-full object-cover">
+              } @else {
+                <div class="flex h-full items-center justify-center text-white">
+                  <p class="text-xl font-bold">{{ gen.powerKVA }} kVA</p>
+                </div>
+              }
+            </div>
+            <div class="p-4">
+              <h3 class="font-semibold text-gray-900">{{ gen.name }}</h3>
+              <p class="text-sm text-gray-500">{{ gen.brand }} · {{ gen.powerKVA }} kVA</p>
+              <p class="mt-2 text-sm font-bold text-brand-500">{{ formatPrice(gen.price) }}</p>
+            </div>
+          </article>
+        }
+      </div>
+      <div class="mt-10 text-center">
+        <a routerLink="/generators" class="btn-primary">View All Generators</a>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- Brands / Expertise -->
+<section class="bg-gray-100 py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="section-title">Brands We Specialize In</h2>
+      <p class="section-subtitle mx-auto max-w-2xl">
+        Specialists in Ashok Leyland, Kirloskar, Caterpillar, Cummins &amp; Rustom. Sale &amp; purchase of all types of second hand gensets.
+      </p>
+    </div>
+    <div class="mt-12 flex flex-wrap items-center justify-center gap-4">
+      @for (brand of brands; track brand) {
+        <span class="rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm">
+          {{ brand }}
+        </span>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bg-brand-500 py-16">
+  <div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-white sm:text-4xl">Need a Quotation?</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-lg text-white/90">
+      Select your services and generate a printable quotation request for repairs, overhauls, or second hand gensets.
+    </p>
+    <a routerLink="/quotation" class="btn-secondary mt-8 border-0 bg-white text-brand-500 hover:bg-gray-100">Request Quotation</a>
+  </div>
+</section>

@@ -1,0 +1,87 @@
+<section class="bg-navy-900 py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h1 class="text-4xl font-bold text-white">Generator Catalog</h1>
+    <p class="mt-4 max-w-2xl text-lg text-gray-300">
+      Browse diesel, gas, and portable generator sets from 15 to 3750 kVA.
+      Filter by type, brand, and power rating.
+    </p>
+  </div>
+</section>
+
+<section class="py-12">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <!-- Filters -->
+    <div class="card mb-8">
+      <h2 class="mb-4 text-lg font-semibold text-gray-900">Filter Generators</h2>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div>
+          <label class="label-field">Type</label>
+          <select [(ngModel)]="filter.type" class="input-field">
+            <option value="">All Types</option>
+            @for (t of types.slice(1); track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="label-field">Brand</label>
+          <select [(ngModel)]="filter.brand" class="input-field">
+            <option value="">All Brands</option>
+            @for (b of brands.slice(1); track b) {
+              <option [value]="b">{{ b }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="label-field">Min kVA</label>
+          <input type="number" [(ngModel)]="filter.minKVA" class="input-field" placeholder="e.g. 100" min="0">
+        </div>
+        <div>
+          <label class="label-field">Max kVA</label>
+          <input type="number" [(ngModel)]="filter.maxKVA" class="input-field" placeholder="e.g. 500" min="0">
+        </div>
+        <div class="flex items-end gap-2">
+          <button type="button" class="btn-primary flex-1" (click)="applyFilter()">Apply</button>
+          <button type="button" class="btn-secondary flex-1" (click)="clearFilter()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    @if (loading) {
+      <p class="py-12 text-center text-gray-500">Loading catalog...</p>
+    } @else if (generators.length === 0) {
+      <div class="py-12 text-center">
+        <p class="text-lg text-gray-600">No generators available yet. Check back soon.</p>
+      </div>
+    } @else {
+      <p class="mb-6 text-sm text-gray-500">{{ generators.length }} generator(s) found</p>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (gen of generators; track gen.id) {
+          <article class="card overflow-hidden p-0">
+            <div class="relative h-48 overflow-hidden bg-gradient-to-br from-navy-800 to-brand-700">
+              @if (gen.imageUrl) {
+                <img [src]="imageSrc(gen)" [alt]="gen.name" class="h-full w-full object-cover">
+              } @else {
+                <div class="flex h-full items-center justify-center text-white">
+                  <div class="text-center">
+                    <p class="text-2xl font-bold">{{ gen.powerKVA }} kVA</p>
+                    <p class="text-xs uppercase tracking-wide text-gray-200">{{ gen.type }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+            <div class="p-5">
+              <h3 class="font-semibold text-gray-900">{{ gen.name }}</h3>
+              <p class="text-sm text-gray-500">{{ gen.brand }} · {{ gen.frequency }}</p>
+              <p class="mt-2 text-sm text-gray-600 line-clamp-2">{{ gen.description }}</p>
+              <div class="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
+                <span class="font-bold text-brand-500">{{ formatPrice(gen.price) }}</span>
+                <a [routerLink]="['/quotation']" [queryParams]="{ generatorId: gen.id }" class="text-sm font-semibold text-brand-500 hover:underline">Quote →</a>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

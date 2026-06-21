@@ -1,0 +1,62 @@
+<section class="bg-navy-900 py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h1 class="text-4xl font-bold text-white">Our Services</h1>
+    <p class="mt-4 max-w-2xl text-lg text-gray-300">
+      {{ company.description }}
+    </p>
+  </div>
+</section>
+
+<section class="py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-8 lg:grid-cols-2">
+      @for (service of services; track service.id) {
+        <article class="card">
+          <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-brand-500/10 text-brand-500">
+            <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <h2 class="text-xl font-semibold text-gray-900">{{ service.name }}</h2>
+          <p class="mt-3 text-sm leading-relaxed text-gray-600">{{ service.description }}</p>
+          <ul class="mt-4 space-y-2">
+            @for (detail of service.details; track detail) {
+              <li class="flex items-start gap-2 text-sm text-gray-600">
+                <svg class="mt-0.5 h-4 w-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                {{ detail }}
+              </li>
+            }
+          </ul>
+          <div class="mt-6 border-t border-gray-100 pt-4">
+            <a [routerLink]="['/quotation']" [queryParams]="{ service: service.name }" class="text-sm font-semibold text-brand-500 hover:underline">Request Quote →</a>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="border-t border-gray-200 bg-gray-50 py-16">
+  <div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+    <h2 class="section-title">Why Choose {{ company.shortName }}?</h2>
+    <div class="mt-12 grid gap-8 sm:grid-cols-3">
+      <div>
+        <p class="text-xl font-bold text-brand-500">Specialized</p>
+        <p class="mt-2 font-medium text-gray-900">DG Set Focus</p>
+        <p class="mt-1 text-sm text-gray-600">Dedicated to generator sets, engines &amp; alternators</p>
+      </div>
+      <div>
+        <p class="text-xl font-bold text-brand-500">End-to-End</p>
+        <p class="mt-2 font-medium text-gray-900">Erection to Overhaul</p>
+        <p class="mt-1 text-sm text-gray-600">From commissioning to complete overhauls</p>
+      </div>
+      <div>
+        <p class="text-xl font-bold text-brand-500">On-Site</p>
+        <p class="mt-2 font-medium text-gray-900">Field Service</p>
+        <p class="mt-1 text-sm text-gray-600">Workshop and on-site support available</p>
+      </div>
+    </div>
+  </div>
+</section>

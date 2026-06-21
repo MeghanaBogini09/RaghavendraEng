@@ -1,0 +1,21 @@
+@media print {
+  :host {
+    display: block;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .quotation-print {
+    padding: 0 !important;
+  }
+
+  .quotation-document {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}

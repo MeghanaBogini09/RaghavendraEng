@@ -1,0 +1,232 @@
+<section class="bg-navy-900 py-8">
+  <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <div>
+      <h1 class="text-2xl font-bold text-white">Admin Panel</h1>
+      <p class="text-sm text-gray-300">Welcome, {{ auth.getAdmin()?.username }}</p>
+    </div>
+    <button type="button" class="btn-primary text-sm" (click)="auth.logout()">Logout</button>
+  </div>
+</section>
+
+<section class="border-b border-gray-200 bg-white">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <nav class="flex gap-1">
+      <button
+        type="button"
+        class="border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+        [class.border-brand-500]="activeTab === 'generators'"
+        [class.text-brand-500]="activeTab === 'generators'"
+        [class.border-transparent]="activeTab !== 'generators'"
+        [class.text-gray-500]="activeTab !== 'generators'"
+        (click)="setTab('generators')"
+      >
+        Generators Upload
+      </button>
+      <button
+        type="button"
+        class="relative border-b-2 px-4 py-3 text-sm font-medium transition-colors"
+        [class.border-brand-500]="activeTab === 'quotations'"
+        [class.text-brand-500]="activeTab === 'quotations'"
+        [class.border-transparent]="activeTab !== 'quotations'"
+        [class.text-gray-500]="activeTab !== 'quotations'"
+        (click)="setTab('quotations')"
+      >
+        Quotation Requests
+        @if (pendingQuotationCount > 0) {
+          <span class="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+            {{ pendingQuotationCount }}
+          </span>
+        }
+      </button>
+    </nav>
+  </div>
+</section>
+
+<section class="py-10">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    @if (error) {
+      <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
+    }
+    @if (success) {
+      <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">{{ success }}</div>
+    }
+
+    @if (activeTab === 'generators') {
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div class="card">
+          <h2 class="mb-5 text-lg font-semibold text-gray-900">Add New Generator</h2>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="sm:col-span-2">
+                <label class="label-field">Name *</label>
+                <input type="text" formControlName="name" class="input-field" placeholder="e.g. RE-DG-250">
+              </div>
+              <div>
+                <label class="label-field">Brand *</label>
+                <select formControlName="brand" class="input-field">
+                  @for (b of brands; track b) {
+                    <option [value]="b">{{ b }}</option>
+                  }
+                </select>
+              </div>
+              <div>
+                <label class="label-field">Type *</label>
+                <select formControlName="type" class="input-field">
+                  @for (t of types; track t) {
+                    <option [value]="t">{{ t }}</option>
+                  }
+                </select>
+              </div>
+              <div>
+                <label class="label-field">Power (kVA) *</label>
+                <input type="number" formControlName="powerKVA" class="input-field" min="1">
+              </div>
+              <div>
+                <label class="label-field">Frequency</label>
+                <input type="text" formControlName="frequency" class="input-field">
+              </div>
+              <div>
+                <label class="label-field">Price (INR)</label>
+                <input type="number" formControlName="price" class="input-field" min="0">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="label-field">Description *</label>
+                <textarea formControlName="description" rows="3" class="input-field"></textarea>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="label-field">Generator Image</label>
+                <input type="file" accept="image/*" class="input-field" (change)="onFileSelected($event)">
+                @if (previewUrl) {
+                  <img [src]="previewUrl" alt="Preview" class="mt-3 h-40 w-full rounded-lg object-cover">
+                }
+              </div>
+            </div>
+            <button type="submit" class="btn-primary" [disabled]="submitting || form.invalid">
+              {{ submitting ? 'Uploading...' : 'Add Generator' }}
+            </button>
+          </form>
+        </div>
+
+        <div>
+          <h2 class="mb-5 text-lg font-semibold text-gray-900">Current Generators</h2>
+          @if (loading) {
+            <p class="text-gray-500">Loading...</p>
+          } @else if (generators.length === 0) {
+            <div class="card text-center text-gray-500">No generators uploaded yet.</div>
+          } @else {
+            <div class="max-h-[600px] space-y-4 overflow-y-auto">
+              @for (gen of generators; track gen.id) {
+                <article class="card flex gap-4 p-4">
+                  <div class="h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                    @if (gen.imageUrl) {
+                      <img [src]="imageSrc(gen)" [alt]="gen.name" class="h-full w-full object-cover">
+                    } @else {
+                      <div class="flex h-full items-center justify-center bg-navy-800 text-xs text-white">{{ gen.powerKVA }} kVA</div>
+                    }
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <h3 class="font-semibold text-gray-900">{{ gen.name }}</h3>
+                    <p class="text-sm text-gray-500">{{ gen.brand }} · {{ gen.type }} · {{ gen.powerKVA }} kVA</p>
+                    <p class="text-sm font-medium text-brand-500">{{ formatPrice(gen.price) }}</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <label class="cursor-pointer text-xs text-brand-500 hover:underline">
+                        Change image
+                        <input type="file" accept="image/*" class="hidden" (change)="onUpdateImage(gen.id, $event)">
+                      </label>
+                      <button type="button" class="text-xs text-red-600 hover:underline" (click)="removeGenerator(gen.id)">Remove</button>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (activeTab === 'quotations') {
+      <h2 class="mb-6 text-xl font-semibold text-gray-900">Quotation Requests from Website</h2>
+
+      @if (quotationsLoading) {
+        <p class="text-gray-500">Loading requests...</p>
+      } @else if (quotationsError) {
+        <p class="text-red-600">{{ quotationsError }}</p>
+      } @else if (quotations.length === 0) {
+        <div class="card text-center text-gray-500">No quotation requests yet.</div>
+      } @else {
+        <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left font-semibold text-gray-700">Ref No</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-700">Customer</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-700">Phone</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-700">Urgency</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
+                <th class="px-4 py-3 text-left font-semibold text-gray-700">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (q of quotations; track q.id) {
+                <tr class="hover:bg-gray-50">
+                  <td class="px-4 py-3 font-medium text-gray-900">{{ q.quotationNo }}</td>
+                  <td class="px-4 py-3 text-gray-700">{{ q.customerName }}</td>
+                  <td class="px-4 py-3 text-gray-700">{{ q.phone }}</td>
+                  <td class="px-4 py-3">
+                    <span class="rounded-full px-2 py-0.5 text-xs font-medium"
+                      [ngClass]="{
+                        'bg-red-100 text-red-700': q.urgency === 'Emergency',
+                        'bg-amber-100 text-amber-700': q.urgency === 'Urgent',
+                        'bg-gray-100 text-gray-700': q.urgency === 'Normal'
+                      }">{{ q.urgency }}</span>
+                  </td>
+                  <td class="px-4 py-3">
+                    <select
+                      class="input-field py-1 text-xs"
+                      [value]="q.status"
+                      (change)="updateQuotationStatus(q.id, $any($event.target).value)"
+                    >
+                      @for (s of statusOptions; track s) {
+                        <option [value]="s">{{ s }}</option>
+                      }
+                    </select>
+                  </td>
+                  <td class="px-4 py-3 text-gray-600">{{ formatDate(q.createdAt) }}</td>
+                  <td class="px-4 py-3">
+                    <button type="button" class="text-brand-500 hover:underline" (click)="viewQuotationDetails(q)">
+                      {{ selectedQuotation?.id === q.id ? 'Hide' : 'View' }}
+                    </button>
+                  </td>
+                </tr>
+                @if (selectedQuotation?.id === q.id) {
+                  <tr>
+                    <td colspan="7" class="bg-gray-50 px-4 py-4">
+                      <div class="grid gap-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                        <div><span class="font-medium text-gray-600">Email:</span> {{ q.email || '—' }}</div>
+                        <div><span class="font-medium text-gray-600">Company:</span> {{ q.company || '—' }}</div>
+                        <div><span class="font-medium text-gray-600">Brand:</span> {{ q.brand || '—' }}</div>
+                        <div class="sm:col-span-2"><span class="font-medium text-gray-600">Address:</span> {{ q.address }}</div>
+                        <div><span class="font-medium text-gray-600">Power:</span> {{ q.powerKVA || '—' }}</div>
+                        <div class="sm:col-span-2"><span class="font-medium text-gray-600">Equipment:</span> {{ q.equipmentDetails || '—' }}</div>
+                        <div class="sm:col-span-3">
+                          <span class="font-medium text-gray-600">Services:</span>
+                          {{ q.selectedServices.join(', ') }}
+                        </div>
+                        @if (q.message) {
+                          <div class="sm:col-span-3">
+                            <span class="font-medium text-gray-600">Message:</span> {{ q.message }}
+                          </div>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
+</section>

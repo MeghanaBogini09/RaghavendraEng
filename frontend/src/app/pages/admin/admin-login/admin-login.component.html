@@ -1,0 +1,31 @@
+<section class="flex min-h-[70vh] items-center justify-center bg-gray-100 py-16">
+  <div class="card mx-4 w-full max-w-md">
+    <div class="mb-6 text-center">
+      <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-brand-500 text-lg font-bold text-white">SR</div>
+      <h1 class="text-2xl font-bold text-gray-900">Admin Login</h1>
+      <p class="mt-2 text-sm text-gray-500">Sign in to manage quotation requests and generator images</p>
+    </div>
+
+    @if (error) {
+      <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+      <div>
+        <label class="label-field" for="username">Username</label>
+        <input id="username" type="text" formControlName="username" class="input-field" autocomplete="username">
+      </div>
+      <div>
+        <label class="label-field" for="password">Password</label>
+        <input id="password" type="password" formControlName="password" class="input-field" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn-primary w-full" [disabled]="loading || form.invalid">
+        {{ loading ? 'Signing in...' : 'Sign In' }}
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-gray-500">
+      <a routerLink="/" class="text-brand-500 hover:underline">← Back to website</a>
+    </p>
+  </div>
+</section>

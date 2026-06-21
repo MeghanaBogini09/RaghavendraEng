@@ -1,0 +1,77 @@
+<section class="bg-navy-900 py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h1 class="text-4xl font-bold text-white">Our History</h1>
+    <p class="mt-4 max-w-3xl text-lg text-gray-300">
+      A journey that began in 1995 as a small-scale industry — growing into a trusted engineering services company.
+    </p>
+  </div>
+</section>
+
+<section class="py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="text-lg leading-relaxed text-gray-600">{{ history.intro }}</p>
+    </div>
+
+    <div class="mt-16">
+      <h2 class="section-title text-center">Milestones</h2>
+      <p class="section-subtitle mx-auto max-w-2xl text-center">Three decades of growth, learning, and service excellence</p>
+
+      <div class="relative mt-12">
+        <div class="absolute left-4 top-0 hidden h-full w-0.5 bg-brand-500/20 md:left-1/2 md:block md:-translate-x-px"></div>
+
+        <div class="space-y-10">
+          @for (milestone of history.milestones; track milestone.year; let i = $index) {
+            <article
+              class="relative md:grid md:grid-cols-2 md:gap-8"
+              [class.md:flex-row-reverse]="i % 2 !== 0"
+            >
+              <div class="hidden md:block" [class.md:order-2]="i % 2 !== 0"></div>
+
+              <div
+                class="card relative md:max-w-lg"
+                [class.md:ml-auto]="i % 2 === 0"
+                [class.md:mr-auto]="i % 2 !== 0"
+                [class.md:order-1]="i % 2 !== 0"
+              >
+                <span class="inline-block rounded-full bg-brand-500 px-3 py-1 text-sm font-bold text-white">
+                  {{ milestone.year }}
+                </span>
+                <h3 class="mt-3 text-xl font-semibold text-gray-900">{{ milestone.title }}</h3>
+                <p class="mt-2 text-sm leading-relaxed text-gray-600">{{ milestone.description }}</p>
+              </div>
+
+              <div
+                class="absolute left-4 top-6 hidden h-3 w-3 -translate-x-1/2 rounded-full border-2 border-brand-500 bg-white md:left-1/2 md:block"
+              ></div>
+            </article>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-20">
+      <h2 class="section-title text-center">What We Stand For</h2>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        @for (value of history.values; track value) {
+          <div class="card text-center">
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-500/10 text-brand-500">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <p class="text-sm font-medium text-gray-700">{{ value }}</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="mt-16 text-center">
+      <p class="text-gray-600">Need our services? Request a quotation or get in touch with our team.</p>
+      <div class="mt-6 flex flex-wrap justify-center gap-4">
+        <a routerLink="/quotation" class="btn-primary">Request Quotation</a>
+        <a routerLink="/contact" class="btn-secondary">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,45 @@
+<footer class="bg-navy-900 text-gray-300">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-8 md:grid-cols-4">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-500 text-sm font-bold text-white">SR</div>
+          <div>
+            <p class="text-lg font-bold text-white">{{ company.name }}</p>
+            <p class="text-sm">{{ company.tagline }}</p>
+          </div>
+        </div>
+        <p class="mt-4 max-w-md text-sm leading-relaxed">
+          {{ company.description }}
+        </p>
+      </div>
+
+      <div>
+        <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Quick Links</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a routerLink="/" class="hover:text-brand-500">Home</a></li>
+          <li><a routerLink="/services" class="hover:text-brand-500">Our Services</a></li>
+          <li><a routerLink="/generators" class="hover:text-brand-500">Generators</a></li>
+          <li><a routerLink="/history" class="hover:text-brand-500">Our History</a></li>
+          <li><a routerLink="/quotation" class="hover:text-brand-500">Quotation Request</a></li>
+          <li><a routerLink="/contact" class="hover:text-brand-500">Contact Us</a></li>
+          <li><a routerLink="/admin/login" class="hover:text-brand-500">Admin Login</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-white">Contact</h3>
+        <ul class="space-y-2 text-sm">
+          <li>{{ company.phone }}</li>
+          <li>{{ company.email }}</li>
+          <li>{{ company.address }}</li>
+          <li>{{ company.hours }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 border-t border-white/10 pt-6 text-center text-sm">
+      <p>&copy; {{ currentYear }} {{ company.name }}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
