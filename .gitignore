@@ -7,6 +7,7 @@ backend/.env
 
 # Local MySQL data
 mysql-data/
+backend/data/
 
 # Build output
 frontend/dist/
