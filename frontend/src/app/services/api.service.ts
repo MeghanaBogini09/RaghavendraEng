@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { Generator, GeneratorFilter } from '../models/generator';
 import { Quotation, QuotationRequest, LoginResponse, AdminUser } from '../models/quotation';
 
@@ -8,8 +9,8 @@ import { Quotation, QuotationRequest, LoginResponse, AdminUser } from '../models
   providedIn: 'root',
 })
 export class ApiService {
-  readonly baseUrl = 'http://localhost:3000/api';
-  readonly assetUrl = 'http://localhost:3000';
+  readonly baseUrl = environment.apiUrl;
+  readonly assetUrl = environment.assetUrl;
 
   constructor(private http: HttpClient) {}
 
